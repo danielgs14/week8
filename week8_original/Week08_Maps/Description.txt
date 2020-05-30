@@ -1,0 +1,31 @@
+Dr. Luis Malpica Cruz
+EDA-R
+March 2020
+
+Week 08: Data on Maps
+
+Background:
+This is the project folder associated with week 08 of EDA-R, which is all about making maps.
+
+Week08_Maps
+|
+|- Week08_Maps.Rproj 	# The project file
+|
+|- Description.txt 	    # You're reading it.
+|
+|- data/    
+|
+|- analysis/            
+|  +- 001_maps.R # R code to build map using marmap and base plot
+| 
+|- functions/
+|  +- MapFunctions.R # Some helper functions  
+|
+|- plots/ #an empty folder into which map image files will be rendered
+|
+|- Resources/
+|  +- ggmap2.pdf # Paper explaining the ggmap features in ggplot2
+|  +- marmap-DataAnalysis.pdf # paper explaining how to use marmap package
+
+
+ 

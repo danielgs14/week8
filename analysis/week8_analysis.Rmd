@@ -19,25 +19,12 @@ marmap: http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0073051
 
 # Install required packages
 ```{r, message=FALSE}
-# We will require these following packages 
-# to use some handy custom made functions
-# install.packages("raster")
+
 library(raster)
-
-# install.packages("grid")
 library(grid)
-
-# install.packages("maptools")
 library(maptools)
-
-# install.packages("GISTools")
 library(GISTools)
-
-# install.packages("rgdal")
 library(rgdal)
-
-#Lastly to access some online ready-to-use data 
-# install.packages("marmap")
 library(marmap)
 
 ```
@@ -52,7 +39,7 @@ source("D:/UABC/II_Semestre/Datos_R/week8/functions/MapFunctions.R")
 ```
 
 # Figure 1 baseline map
-```{r}
+```{r, message=FALSE}
 # Creates a simple map of Baja with bathymetric lines
 
 # This next line requires internet conection
@@ -137,7 +124,7 @@ summary(BVMap)
 
 # Run this when you are ready to save the map plot as TIFF file
 # Remember you can save in other formats too
-#tiff(filename = "D:/UABC/II_Semestre/Datos_R/week8/plots/BV_map.tiff",
+#tiff(filename = "D:/UABC/II_Semestre/Datos_R/week8/plots/BV_map2.tiff",
 #        width = 14, height = 18, units = "cm", 
 #        res = 300,
 #        compression ="lzw")
@@ -147,7 +134,7 @@ summary(BVMap)
 plot(BVMap, xlim=c(-116.45, -113.45), ylim=c(27.45, 29.45),
      deepest.isobath = c(-200, -50, 0), 
      shallowest.isobath = c(-200, -50, 0),
-     col= c("grey80", "grey60", "black"),
+     col= c("blue", "green", "black"),
      step=c(1,1,1),
      lty=c(1,1,1), 
      lwd=c(0.6,0.6,1.2), 
@@ -161,8 +148,8 @@ north.arrow(xb=-114, yb=29.25, len=0.05, lab="N")
 text(x = -115, y = 28.9, "Vizcaino Bay")
 rect(xleft = -115.05, xright = -114.35,
      ybottom = 27.85, ytop = 28.8, col=NA, border="red")
-points(BVSites, col="blue")
+points(BVSites, col="sandybrown")
 
-#dev.off() # Run this is saving to tiff as output file
+dev.off() # Run this is saving to tiff as output file
 ```
 

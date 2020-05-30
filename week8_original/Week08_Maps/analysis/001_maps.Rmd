@@ -1,0 +1,167 @@
+---
+title: "Data on Maps"
+author: "Dr. Luis Malpica"
+date: "March, 2020"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    theme: united
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+# Introduction
+Here we will explore a basic code to build maps in R using the marmap package and base plot
+
+You can explore more about the package here:
+marmap: http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0073051
+
+# Install required packages
+```{r, message=FALSE}
+# We will require these following packages 
+# to use some handy custom made functions
+# install.packages("raster")
+library(raster)
+
+# install.packages("grid")
+library(grid)
+
+# install.packages("maptools")
+library(maptools)
+
+# install.packages("GISTools")
+library(GISTools)
+
+# install.packages("rgdal")
+library(rgdal)
+
+#Lastly to access some online ready-to-use data 
+# install.packages("marmap")
+library(marmap)
+
+```
+
+# Load custom made functions
+```{r}
+# This one calls a set of functions in another script
+# These functions are custom made, not part of any package
+# In this case they build a scale bar and a north arrow
+# You can explore on your own this file and figure out how it works =)
+source("/Volumes/GoogleDrive/My Drive/IIO-UABC/Cursos/FCM/Analisis_R/Posgrado/wk8/Week08_Maps/functions/MapFunctions.R")
+```
+
+# Figure 1 baseline map
+```{r}
+# Creates a simple map of Baja with bathymetric lines
+
+# This next line requires internet conection
+# This functions uses the marmap package to download 
+# coastline and bathymetric data from NOAA
+
+Baja <- getNOAA.bathy(lon1=-106,lon2=-121,lat1=34,lat2=22,
+                      resolution = 2) # reduce resolution number to get finer details
+
+summary(Baja)
+
+# This is the basic map that is created
+
+plot(Baja, xlim=c(-121, -106), ylim=c(22, 34),
+     image=T,
+     deepest.isobath = 0, #Try: c(-500, -250, 0), 
+     shallowest.isobath = 0, #Try: c(-500, -250, 0),
+     col="black", # With above, try: c("grey80", "grey40", "black")
+     step=1, # c(1,1,1),
+     lty=1, #c(1,1,1), 
+     lwd=0.6, # c(0.6,0.6,1.2), 
+     drawlabels=F) #With above, try: c(T,T,F))
+
+# Not bad at all
+# But, if you need this for a publication you may need something more like this
+
+# Run this when you are ready to save the map plot as TIFF file
+# Remember you can save in other formats too
+# tiff(filename = "./plots/Baja_test.tiff",
+#          width = 20, height = 18, units = "cm", 
+#          res = 300,
+#          compression ="lzw")
+
+# Plot basic coastline
+plot(Baja, xlim=c(-121, -106), ylim=c(22, 34),
+     deepest.isobath = 0, #Depth lines, Try: c(-500, -250, 0), 
+     shallowest.isobath = 0, #Depth lines, Try: c(-500, -250, 0),
+     col="black", # With above, try: c("grey80", "grey40", "black")
+     step=1, # c(1,1,1),
+     lty=1, #c(1,1,1), 
+     lwd=0.6, # c(0.6,0.6,1.2), 
+     drawlabels=F) #With above, try: c(T,T,F))
+
+# Here we add a scale bar and a north arrow for reference
+scaleBathy(Baja, deg=2.5, y=23, x=-117) #add a scale
+north.arrow(xb=-110, yb=32, len=0.22, lab="N")
+
+# Annotate some key reference points
+text(x = -117, y = 26, "Pacific Ocean", cex = 1.5)
+points(x = -116.6, y = 31.85, pch=16)
+text(x = -118, y = 31.85, "Ensenada", cex = 0.8)
+points(x = -110.32, y = 24.17, pch=16)
+text(x = -109, y = 24.17, "La Paz", cex = 0.8)
+
+# Assign some specific study area
+rect(xleft = -116.5, xright = -113.5,
+     ybottom = 27.5, ytop = 29.5, 
+     col=NA,
+     border="red")
+
+# dev.off() # Run this is saving to tiff as output file
+```
+
+# Figure 2 zoomed in map
+```{r}
+# Also, it may help to create a zoomed in map, 
+# This is a hypothetical Vizcaino Bay study area map
+
+# Create some fictional sampling sites
+lat <- runif(20, 27.9, 28.75)
+lon <- runif(20, -115, -114.4)
+# Store these sites in a df
+BVSites <- data.frame(lon, lat)
+
+# Create df from NOAA of specific study area
+BVMap <- getNOAA.bathy(lon1 = -116.45, lon2 = -113.45,
+                         lat1 = 27.45, lat2 = 29.45, 
+                       resolution = 1) # reduce resolution number to get finer details
+
+summary(BVMap)
+
+# Run this when you are ready to save the map plot as TIFF file
+# Remember you can save in other formats too
+# tiff(filename = "./plots/BV_map.tiff",
+#          width = 14, height = 18, units = "cm", 
+#          res = 300,
+#          compression ="lzw")
+
+
+# Plot it
+plot(BVMap, xlim=c(-116.45, -113.45), ylim=c(27.45, 29.45),
+     deepest.isobath = c(-200, -50, 0), 
+     shallowest.isobath = c(-200, -50, 0),
+     col= c("grey80", "grey60", "black"),
+     step=c(1,1,1),
+     lty=c(1,1,1), 
+     lwd=c(0.6,0.6,1.2), 
+     drawlabels=c(T,T,F))
+
+# Add scale and north arrow
+scaleBathy(BVMap, deg=0.5, y=27.5, x=-115.5) #add a scale
+north.arrow(xb=-114, yb=29.25, len=0.05, lab="N") 
+
+# Add labels, study area and sampling locations
+text(x = -115, y = 28.9, "Vizcaino Bay")
+rect(xleft = -115.05, xright = -114.35,
+     ybottom = 27.85, ytop = 28.8, col=NA, border="red")
+points(BVSites, col="blue")
+
+# dev.off() # Run this is saving to tiff as output file
+```
+
